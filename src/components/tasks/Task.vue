@@ -4,11 +4,11 @@
             class="d-flex justify-content-start align-items-center"
         >
             <input
-                class="form-check-input mt-0 completed"
-                type="checkbox"
+                class="form-check-input mt-0" :class="compltedClass"
+                type="checkbox" :checked="task.is_completed"
             />
             <div
-                class="ms-2 flex-grow-1"
+                class="ms-2 flex-grow-1" :class="compltedClass"
                 title="Double click the text to edit or remove"
             >
                 <!-- <div class="relative">
@@ -16,7 +16,7 @@
                 </div> -->
                 <span>{{  task.name }}</span>
             </div>
-            <div class="task-date">24 Feb 12:00</div>
+            <!-- <div class="task-date">24 Feb 12:00</div> -->
         </div>
         <div class="task-actions">
             <button
@@ -34,9 +34,14 @@
 </template>
 
 <script setup>
-    import IconPencil from '../icons/IconPencil.vue';
+    import { computed } from 'vue';
+import IconPencil from '../icons/IconPencil.vue';
     import IconTrash  from '../icons/IconTrash.vue';
-    defineProps({
+    const props = defineProps({
         task: Object
     })
+
+    const compltedClass = computed(()=>
+        props.task.is_completed ? "completed" : ""
+    )
 </script>
