@@ -36,6 +36,7 @@
                         :show="completedTasksIsVisible && showCompletedTasks"
                         @updated="handleUpdatedTask"
                         @completed="handleCompletedTask"
+                        @removed="handleRemovedTask"
                     />
                 </div>
             </div>
@@ -44,15 +45,29 @@
 </template>
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useTaskStore } from "../stores/task";
 import { allTasks, createTask, updateTask, completeTask, removeTask } from "../http/task-api";
 import Tasks from "../components/tasks/Tasks.vue";
 import NewTask from "../components/tasks/NewTask.vue";
+
+const store = useTaskStore()
+const {task} = storeToRefs(store)
+
+// store.$patch({
+//     task:{
+//         name: "First task updated using $patch",
+//         is_completed: true
+//     }
+// })
 
 const tasks = ref([]);
 
 onMounted(async () => {
     const { data } = await allTasks();
     tasks.value = data.data;
+    console.log(task.value);
+    
 });
 
 const uncompletedTasks = computed(() =>
