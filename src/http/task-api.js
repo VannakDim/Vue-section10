@@ -6,7 +6,7 @@ export const allTasks = () => api.get(resource);
 
 export const createTask = (task) => api.post(resource, task);
 
-export const updatetask = (id, task) => api.put(`${resource}/${id}`, task);
+export const updateTask = (id, task) => api.put(`${resource}/${id}`, task);
 
 export const removeTask = (id) => api.delete(`${resource}/${id}`);
 
