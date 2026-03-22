@@ -14,9 +14,11 @@
                 @dblclick="$event => isEdit = true"
             >
                 <div class="relative" v-if="isEdit">
-                    <input class="editable-task" type="text" 
-                    @keyup.esc="$event => isEdit = false" v-focus
+                    <input class="editable-task" type="text"
+                    v-focus
+                    @keyup.esc="undo"
                     @keyup.enter="updateTask"
+                    v-model="editingTask"
                 />
                 </div>
                 <span v-else>{{ task.name }}</span>
@@ -38,6 +40,8 @@ const emit = defineEmits(['updated']);
 
 const isEdit = ref(false)
 
+const editingTask = ref(props.task.name)
+
 const completedClass = computed(() =>
     props.task.is_completed ? "completed" : "",
 );
@@ -52,6 +56,9 @@ const updateTask = event => {
     emit('updated', updatedTask)
 }
 
+const undo = ()=>
+    isEdit.value = false
+    editingTask.value = props.task.name
 
 
 </script>
