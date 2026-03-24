@@ -6,45 +6,51 @@ import NotFoundErrorPage from "@/pages/errors/NotFoundErrorPage.vue";
 import HomePage from "@/pages/HomePage.vue";
 
 const routes = [
-    {
-        path: "/",
-        component: HomePage,
-        name: 'home',
-        meta: {
-            auth: true
-        }
+  {
+    path: "/",
+    component: HomePage,
+    name: "home",
+    meta: {
+      auth: true,
     },
-    {
-        path: "/tasks",
-        component: TaskPage,
-        name: 'tasks',
-        meta: {
-            auth: true
-        }
+  },
+  {
+    path: "/tasks",
+    component: TaskPage,
+    name: "tasks",
+    meta: {
+      auth: true,
     },
-    {
-        path: "/login",
-        component: LoginPage,
-        name: 'login'
+  },
+  {
+    path: "/login",
+    component: LoginPage,
+    name: "login",
+    meta: {
+      guest: true,
     },
-    {
-        path: "/register",
-        component: RegisterPage,
-        name: 'register'
+  },
+  {
+    path: "/register",
+    component: RegisterPage,
+    name: "register",
+    meta: {
+      guest: true,
     },
-    {
-        path: "/summary",
-        component: SummaryPage,
-        name: 'summary',
-        // meta: {
-        //     auth: true
-        // }
-    },
-    {
-        path: "/:notFound(.*)",
-        component: NotFoundErrorPage,
-        name: 'error.404'
-    },
-]
+  },
+  {
+    path: "/summary",
+    component: SummaryPage,
+    name: "summary",
+    // meta: {
+    //     auth: true
+    // }
+  },
+  {
+    path: "/:notFound(.*)",
+    component: NotFoundErrorPage,
+    name: "error.404",
+  },
+];
 
-export default routes
+export default routes;

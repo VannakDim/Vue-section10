@@ -6,18 +6,22 @@ export const useAuthStore = defineStore("authStore", () => {
   const user = ref(null);
 
   const isLoggedIn = computed(() => !!user.value);
-  
+
   const fetchUser = async () => {
-    const { data } = await getUser();
-    user.value = data;
+    try {
+      const { data } = await getUser();
+      user.value = data;
+    } catch (error) {
+      user.value = null;
+    }
   };
-  
+
   const handleLogin = async (credentials) => {
     await csrfCookie();
     await login(credentials);
     await fetchUser();
   };
-  
+
   const handleRegister = async (newUser) => {
     await register(newUser);
     await handleLogin({
@@ -25,12 +29,12 @@ export const useAuthStore = defineStore("authStore", () => {
       password: newUser.password,
     });
   };
-  
+
   const handleLogout = async () => {
     await logout();
     user.value = null;
   };
-  
+
   return {
     user,
     isLoggedIn,
