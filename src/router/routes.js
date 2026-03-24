@@ -10,17 +10,17 @@ const routes = [
         path: "/",
         component: HomePage,
         name: 'home',
-        // meta: {
-        //     auth: true
-        // }
+        meta: {
+            auth: true
+        }
     },
     {
         path: "/tasks",
         component: TaskPage,
         name: 'tasks',
-        // meta: {
-        //     auth: true
-        // }
+        meta: {
+            auth: true
+        }
     },
     {
         path: "/login",
