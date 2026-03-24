@@ -3,15 +3,24 @@ import RegisterPage from "@/pages/RegisterPage.vue";
 import LoginPage from "@/pages/LoginPage.vue";
 import SummaryPage from "@/pages/SummaryPage.vue";
 import NotFoundErrorPage from "@/pages/errors/NotFoundErrorPage.vue";
+import HomePage from "@/pages/HomePage.vue";
 
 const routes = [
+    {
+        path: "/",
+        component: HomePage,
+        name: 'home',
+        // meta: {
+        //     auth: true
+        // }
+    },
     {
         path: "/tasks",
         component: TaskPage,
         name: 'tasks',
-        meta: {
-            auth: true
-        }
+        // meta: {
+        //     auth: true
+        // }
     },
     {
         path: "/login",
@@ -27,9 +36,9 @@ const routes = [
         path: "/summary",
         component: SummaryPage,
         name: 'summary',
-        meta: {
-            auth: true
-        }
+        // meta: {
+        //     auth: true
+        // }
     },
     {
         path: "/:notFound(.*)",
