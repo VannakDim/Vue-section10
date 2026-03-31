@@ -1,30 +1,72 @@
+
 <template>
     <li class="list-group-item py-3">
         <div class="d-flex justify-content-start align-items-center">
-            <input class="form-check-input mt-0" type="checkbox" :class="[completedClass, priorityClass]"
-                :checked="task.is_completed" @change="markTaskAsCompleted" />
-            <div class="ms-2 flex-grow-1" :class="completedClass" title="Double click the text to edit or remove"
-                @dblclick="isEdit = true">
-                <div class="relative" v-if="isEdit" title="Press Enter key to save update or Esc to discard.">
-                    <input class="editable-task" type="text" v-focus @keyup.esc="undo" @keyup.enter="updateTask"
-                        v-model="editingTask" ref="inputRef" />
-                    
-                    <div class="action-buttons">
-                        <SelectPriority :selected="selectedPriority" @change="setPriority" />
-                    </div>
+            <input
+                class="form-check-input mt-0"
+                type="checkbox"
+                :class="[completedClass, priorityClass]"
+                :checked="task.is_completed"
+                @change="markTaskAsCompleted"
+            />
+            <div
+                class="ms-2 flex-grow-1"
+                :class="completedClass"
+                title="Double click the text to edit or remove"
+                @dblclick="isEdit = true"
+            >
+                <div v-if="isEdit">
+                    <DatePicker 
+                        v-model="selectedDate" 
+                        :popover="{ placement: 'bottom-end' }" 
+                        :min-date="new Date()"
+                        @update:model-value="focusInput"
+                    >
+                        <template #default="{ togglePopover }">
+                            <div class="relative" title="ចុច Enter ដើម្បី save រឺចុច Esc ដើម្បីរក្សាទិន្នន័យដើម">
+                                <input
+                                    class="editable-task"
+                                    type="text"
+                                    v-focus
+                                    @keyup.esc="undo"
+                                    @keyup.enter="updateTask"
+                                    v-model="editingTask"
+                                    ref="inputRef"
+                                />
+                                <div class="action-buttons">
+                                    <SelectPriority
+                                        :selected="selectedPriority" 
+                                        @change="setPriority"
+                                    />
+                                    <button class="btn btn-sm btn-light" @click="togglePopover" type="button" title="Set due date">
+                                        <IconCalendar />
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </DatePicker>
                 </div>
                 <span v-else>{{ task.name }}</span>
             </div>
-            <!-- <div class="task-date">24 Feb 12:00</div> -->
+            <div class="task-date" v-if="!isEdit">{{ formattedDate }}</div>
         </div>
-        <TaskActions @edit="isEdit = true" v-show="!isEdit" @remove="removeTask" />
+        <TaskActions
+            @edit="isEdit = true"
+            v-show="!isEdit"
+            @remove="removeTask"
+        />
     </li>
 </template>
 
 <script setup>
 import { computed, ref } from "vue";
+import { useDateFormatter } from "../../composables/useDateFormatter";
+import { useFocusInput } from "../../composables/useFocusInput";
 import TaskActions from "./TaskActions.vue";
 import SelectPriority from "./SelectPriority.vue";
+import IconCalendar from "../icons/IconCalendar.vue";
+import { DatePicker } from "v-calendar";
+import 'v-calendar/style.css';
 
 const props = defineProps({
     task: Object,
@@ -33,12 +75,16 @@ const props = defineProps({
 const emit = defineEmits(["updated", "completed", "removed"]);
 
 const inputRef = ref();
-const selectedPriority = ref(props.task.priority?.id || null);
+const selectedPriority = ref(props.task.priority?.id || null)
+const selectedDate = ref(props.task.due_date ? new Date(props.task.due_date) : null);
+
+const { focusInput } = useFocusInput(inputRef);
+const { formatDateLocal, formatDate } = useDateFormatter();
 
 const setPriority = (id) => {
-    selectedPriority.value = id;
-    inputRef.value.focus();
-};
+    selectedPriority.value = id
+    focusInput();
+}
 
 const isEdit = ref(false);
 const editingTask = ref(props.task.name);
@@ -51,11 +97,13 @@ const vFocus = {
 };
 
 const updateTask = (event) => {
-    const updatedTask = {
-        ...props.task,
+    const updatedTask = { 
+        ...props.task, 
         name: event.target.value,
         priority_id: selectedPriority.value,
+        due_date: selectedDate.value ? formatDateLocal(selectedDate.value) : null
     };
+
     isEdit.value = false;
     emit("updated", updatedTask);
 };
@@ -64,6 +112,7 @@ const undo = () => {
     isEdit.value = false;
     editingTask.value = props.task.name;
     selectedPriority.value = props.task.priority?.id || null;
+    selectedDate.value = props.task.due_date ? new Date(props.task.due_date) : null;
 };
 
 const markTaskAsCompleted = (event) => {
@@ -82,40 +131,37 @@ const removeTask = () => {
 
 const priorityClass = computed(() => {
     const classesMap = {
-        null: "none",
-        1: "high",
-        2: "medium",
-        3: "low",
-    };
-    const activeClass = classesMap[selectedPriority.value] || "none";
+        null: 'none',
+        1: 'high',
+        2: 'medium',
+        3: 'low'
+    }
+    const activeClass = classesMap[selectedPriority.value] || 'none';
     return `priority-${activeClass}`;
 });
+
+const formattedDate = computed(() => formatDate(selectedDate.value));
 </script>
 
 <style scoped>
 .form-check-input:checked {
-    background-color: rgb(108, 117, 125);
-    border-color: rgb(108, 117, 125);
+    background-color: rgb(108,117,125);
+    border-color: rgb(108,117,125);
 }
-
 .form-check-input:not(:checked) {
-    outline: 0;
-    border: 0;
+   outline: 0;
+   border: 0;
 }
-
 .priority-high:not(:checked) {
-    box-shadow: 0 0 0 0.1rem rgb(220, 53, 69) !important;
+   box-shadow: 0 0 0 0.1rem rgb(220,53,69) !important;
 }
-
 .priority-medium:not(:checked) {
-    box-shadow: 0 0 0 0.1rem rgb(255, 193, 7) !important;
+   box-shadow: 0 0 0 0.1rem rgb(255,193,7) !important;
 }
-
 .priority-low:not(:checked) {
-    box-shadow: 0 0 0 0.1rem rgb(13, 110, 253) !important;
+   box-shadow: 0 0 0 0.1rem rgb(13,110,253) !important;
 }
-
 .priority-none:not(:checked) {
-    box-shadow: 0 0 0 0.1rem rgba(0, 0, 0, 0.25) !important;
+   box-shadow: 0 0 0 0.1rem rgba(0,0,0,.25) !important;
 }
 </style>
