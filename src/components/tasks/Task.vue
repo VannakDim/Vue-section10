@@ -1,45 +1,23 @@
 <template>
     <li class="list-group-item py-3">
         <div class="d-flex justify-content-start align-items-center">
-            <input
-                class="form-check-input mt-0"
-                type="checkbox"
-                :class="[completedClass, priorityClass]"
-                :checked="task.is_completed"
-                @change="markTaskAsCompleted"
-            />
-            <div
-                class="ms-2 flex-grow-1"
-                :class="completedClass"
-                title="Double click the text to edit or remove"
-                @dblclick="isEdit = true"
-            >
-                <div class="relative" v-if="isEdit">
-                    <input
-                        class="editable-task"
-                        type="text"
-                        v-focus
-                        @keyup.esc="undo"
-                        @keyup.enter="updateTask"
-                        v-model="editingTask"
-                        ref="inputRef"
-                    />
-                    <div class="select-priority">
-                        <SelectPriority
-                            :selected="selectedPriority" 
-                            @change="setPriority"
-                        />
+            <input class="form-check-input mt-0" type="checkbox" :class="[completedClass, priorityClass]"
+                :checked="task.is_completed" @change="markTaskAsCompleted" />
+            <div class="ms-2 flex-grow-1" :class="completedClass" title="Double click the text to edit or remove"
+                @dblclick="isEdit = true">
+                <div class="relative" v-if="isEdit" title="Press Enter key to save update or Esc to discard.">
+                    <input class="editable-task" type="text" v-focus @keyup.esc="undo" @keyup.enter="updateTask"
+                        v-model="editingTask" ref="inputRef" />
+                    
+                    <div class="action-buttons">
+                        <SelectPriority :selected="selectedPriority" @change="setPriority" />
                     </div>
                 </div>
                 <span v-else>{{ task.name }}</span>
             </div>
             <!-- <div class="task-date">24 Feb 12:00</div> -->
         </div>
-        <TaskActions
-            @edit="isEdit = true"
-            v-show="!isEdit"
-            @remove="removeTask"
-        />
+        <TaskActions @edit="isEdit = true" v-show="!isEdit" @remove="removeTask" />
     </li>
 </template>
 
@@ -55,12 +33,12 @@ const props = defineProps({
 const emit = defineEmits(["updated", "completed", "removed"]);
 
 const inputRef = ref();
-const selectedPriority = ref(props.task.priority?.id || null)
+const selectedPriority = ref(props.task.priority?.id || null);
 
 const setPriority = (id) => {
-    selectedPriority.value = id
+    selectedPriority.value = id;
     inputRef.value.focus();
-}
+};
 
 const isEdit = ref(false);
 const editingTask = ref(props.task.name);
@@ -73,10 +51,10 @@ const vFocus = {
 };
 
 const updateTask = (event) => {
-    const updatedTask = { 
-        ...props.task, 
+    const updatedTask = {
+        ...props.task,
         name: event.target.value,
-        priority_id: selectedPriority.value
+        priority_id: selectedPriority.value,
     };
     isEdit.value = false;
     emit("updated", updatedTask);
@@ -85,7 +63,7 @@ const updateTask = (event) => {
 const undo = () => {
     isEdit.value = false;
     editingTask.value = props.task.name;
-    selectedPriority.value = props.task.priority?.id || null
+    selectedPriority.value = props.task.priority?.id || null;
 };
 
 const markTaskAsCompleted = (event) => {
@@ -104,35 +82,40 @@ const removeTask = () => {
 
 const priorityClass = computed(() => {
     const classesMap = {
-        null: 'none',
-        1: 'high',
-        2: 'medium',
-        3: 'low'
-    }
-    const activeClass = classesMap[selectedPriority.value] || 'none';
+        null: "none",
+        1: "high",
+        2: "medium",
+        3: "low",
+    };
+    const activeClass = classesMap[selectedPriority.value] || "none";
     return `priority-${activeClass}`;
 });
 </script>
 
 <style scoped>
 .form-check-input:checked {
-    background-color: rgb(108,117,125);
-    border-color: rgb(108,117,125);
+    background-color: rgb(108, 117, 125);
+    border-color: rgb(108, 117, 125);
 }
+
 .form-check-input:not(:checked) {
-   outline: 0;
-   border: 0;
+    outline: 0;
+    border: 0;
 }
+
 .priority-high:not(:checked) {
-   box-shadow: 0 0 0 0.1rem rgb(220,53,69) !important;
+    box-shadow: 0 0 0 0.1rem rgb(220, 53, 69) !important;
 }
+
 .priority-medium:not(:checked) {
-   box-shadow: 0 0 0 0.1rem rgb(255,193,7) !important;
+    box-shadow: 0 0 0 0.1rem rgb(255, 193, 7) !important;
 }
+
 .priority-low:not(:checked) {
-   box-shadow: 0 0 0 0.1rem rgb(13,110,253) !important;
+    box-shadow: 0 0 0 0.1rem rgb(13, 110, 253) !important;
 }
+
 .priority-none:not(:checked) {
-   box-shadow: 0 0 0 0.1rem rgba(0,0,0,.25) !important;
+    box-shadow: 0 0 0 0.1rem rgba(0, 0, 0, 0.25) !important;
 }
 </style>
