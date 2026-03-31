@@ -3,6 +3,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-8 offset-md-2">
+                    <!-- Task order -->
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h3 class="text-body mb-0">Tasks</h3>
+                        <SortTasks />
+                    </div>
+
                     <!-- Add new Task -->
                     <NewTask />
 
@@ -10,58 +16,50 @@
                     <Tasks :tasks="uncompletedTasks" />
 
                     <!-- show toggle button -->
-                    <div
-                        class="text-center my-3"
-                        v-show="showToggleCompletedBtn"
-                    >
-                        <button
-                            class="btn btn-sm btn-secondary"
-                            @click="showCompletedTasks = !showCompletedTasks"
-                        >
-                            <span v-if="!showCompletedTasks"
-                                >Show completed</span
-                            >
+                    <div class="text-center my-3" v-show="showToggleCompletedBtn">
+                        <button class="btn btn-sm btn-secondary" @click="showCompletedTasks = !showCompletedTasks">
+                            <span v-if="!showCompletedTasks">Show completed</span>
                             <span v-else>Hide completed</span>
                         </button>
                     </div>
 
                     <!-- list of completed tasks -->
-                    <Tasks
-                        :tasks="completedTasks"
-                        :show="completedTasksIsVisible && showCompletedTasks"
-                    />
+                    <Tasks :tasks="completedTasks" :show="completedTasksIsVisible && showCompletedTasks" />
                 </div>
             </div>
         </div>
     </main>
 </template>
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useTaskStore } from "../stores/task";
 import Tasks from "../components/tasks/Tasks.vue";
 import NewTask from "../components/tasks/NewTask.vue";
+import SortTasks from "../components/tasks/SortTasks.vue";
+import { useRoute } from "vue-router";
 
-const store = useTaskStore()
-const {completedTasks, uncompletedTasks} = storeToRefs(store)
-const {fetchAllTasks} = store
+const store = useTaskStore();
+const { completedTasks, uncompletedTasks } = storeToRefs(store);
+const { fetchAllTasks } = store;
 
+const route = useRoute();
+
+watch(
+    () => route.query,
+    async (query) => await fetchAllTasks(query),
+    { immediate: true },
+);
 
 onMounted(async () => {
-    await fetchAllTasks()
-    
+    await fetchAllTasks();
 });
-
 
 const showToggleCompletedBtn = computed(
     () => uncompletedTasks.value.length > 0 && completedTasks.value.length > 0,
 );
 const completedTasksIsVisible = computed(
-    () =>
-        uncompletedTasks.value.length === 0 || completedTasks.value.length > 0,
+    () => uncompletedTasks.value.length === 0 || completedTasks.value.length > 0,
 );
 const showCompletedTasks = ref(false);
-
-
-
 </script>
