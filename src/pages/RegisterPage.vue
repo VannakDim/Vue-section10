@@ -6,6 +6,7 @@
                 <strong>List</strong>
             </h1>
             <h2 class="h3 mb-4 fw-normal">Please sign up</h2>
+            <!-- {{ form }} -->
             <div class="form-floating mb-2">
                 <input type="text" class="form-control" :class="{ 'is-invalid': errors.name && errors.name[0] }" id="name" v-model="form.name" placeholder="Your name" />
                 <label for="name">Name</label>

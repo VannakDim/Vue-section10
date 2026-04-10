@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
@@ -39,6 +39,10 @@ const { handleLogin } = store
 const form = reactive({
     email: '',
     password: '' 
+})
+
+onMounted(async()=>{
+    // console.log('Hello');
 })
 
 const handleSubmit = async () => {

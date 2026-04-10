@@ -57,6 +57,7 @@ watch(
 
 onMounted(async () => {
     await fetchAllTasks();
+    // console.log(uncompletedTasks.value);
 });
 
 const showToggleCompletedBtn = computed(
