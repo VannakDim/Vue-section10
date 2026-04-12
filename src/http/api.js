@@ -1,15 +1,17 @@
 import axios from "axios";
 
-// axios.defaults.withCredentials = true
-// axios.defaults.withXSRFToken = true
+axios.defaults.withCredentials = true
+axios.defaults.withXSRFToken = true
 
 const api = axios.create({
   // baseURL: import.meta.env.VITE_BASE_URL,
-  baseURL: 'https://api.lch-tech.site', // 👈 IMPORTANT
+  baseURL: 'https://cm2.stpmtelecom.com', // 👈 IMPORTANT
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true,
+  withXSRFToken: true
 });
 // ✅ Attach token automatically
 api.interceptors.request.use(config => {

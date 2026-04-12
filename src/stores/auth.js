@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { login, register, logout, getUser } from "../http/auth-api";
+import { csrfCookie, login, register, logout, getUser } from "../http/auth-api";
 
 export const useAuthStore = defineStore("authStore", () => {
   const user = ref(null);
@@ -33,7 +33,7 @@ export const useAuthStore = defineStore("authStore", () => {
   };
 
   const handleRegister = async (newUser) => {
-    // await csrfCookie();
+    await csrfCookie();
     try {
       await register(newUser);
       await handleLogin({
