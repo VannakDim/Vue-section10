@@ -11,7 +11,7 @@ const routes = [
     component: HomePage,
     name: "home",
     meta: {
-      auth: true,
+      auth: false,
     },
   },
   {
@@ -42,9 +42,9 @@ const routes = [
     path: "/summary",
     component: SummaryPage,
     name: "summary",
-    // meta: {
-    //     auth: true
-    // }
+    meta: {
+        auth: true
+    }
   },
   {
     path: "/:notFound(.*)",
